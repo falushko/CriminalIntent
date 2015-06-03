@@ -20,7 +20,7 @@ import java.util.UUID;
 /**
  * Created by vladimir on 29.05.15.
  */
-public class CrimeFragment extends android.app.Fragment {
+public class CrimeFragment extends android.support.v4.app.Fragment {
     public static final String EXTRA_CRIME_ID =
             "com.bignerdranch.android.criminalintent.crime_id";
 

@@ -3,7 +3,6 @@ package com.bignerdranch.android.criminalintent;
 import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -30,7 +29,7 @@ public class CrimeListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Crime c = ((CrimeAdapter)getListAdapter()).getItem(position);
-        // Запуск CrimeActivity
+
         Intent i = new Intent(getActivity(), CrimeActivity.class);
         i.putExtra(CrimeFragment.EXTRA_CRIME_ID, c.getId());
         startActivity(i);
@@ -50,12 +49,12 @@ public class CrimeListFragment extends ListFragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-// Если мы не получили представление, заполняем его
+
             if (convertView == null) {
                 convertView = getActivity().getLayoutInflater()
                         .inflate(R.layout.list_item_crime, null);
             }
-// Настройка представления для объекта Crime
+
             Crime c = getItem(position);
             TextView titleTextView =
                     (TextView)convertView.findViewById(R.id.crime_list_item_titleTextView);
