@@ -42,5 +42,9 @@ public class Crime {
         mSolved = solved;
     }
 
+    @Override
+    public String toString() {
+        return mTitle;
 
+    }
 }
