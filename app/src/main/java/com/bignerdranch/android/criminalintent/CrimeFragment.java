@@ -1,6 +1,7 @@
 package com.bignerdranch.android.criminalintent;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -23,6 +24,8 @@ import java.util.UUID;
 public class CrimeFragment extends android.support.v4.app.Fragment {
     public static final String EXTRA_CRIME_ID =
             "com.bignerdranch.android.criminalintent.crime_id";
+    private static final String DIALOG_DATE = "date";
+
 
     private Crime mCrime;
     private EditText mTitleField;
@@ -74,7 +77,16 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
 
         CharSequence date = new DateFormat().format("EEEE d.LL.yyyy", mCrime.getDate());;
         mDateButton.setText(date.toString());
-        mDateButton.setEnabled(false);
+        mDateButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FragmentManager fm = getActivity()
+                        .getSupportFragmentManager();
+                DatePickerFragment dialog = DatePickerFragment
+                        .newInstance(mCrime.getDate());
+                dialog.show(fm, DIALOG_DATE);
+            }
+        });
+
 
         mSolvedCheckBox = (CheckBox)v.findViewById(R.id.crime_solved);
         mSolvedCheckBox.setChecked(mCrime.isSolved());
