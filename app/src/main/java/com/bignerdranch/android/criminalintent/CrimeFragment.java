@@ -1,14 +1,18 @@
 package com.bignerdranch.android.criminalintent;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,6 +21,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import android.text.format.DateFormat;
+
 import java.text.FieldPosition;
 import java.text.ParsePosition;
 import java.util.Date;
@@ -51,18 +56,44 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        UUID crimeId = (UUID)getArguments()
+        UUID crimeId = (UUID) getArguments()
                 .getSerializable(EXTRA_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
+        setHasOptionsMenu(true);
+    }
 
-}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (NavUtils.getParentActivityName(getActivity()) != null) {
+                    NavUtils.navigateUpFromSameTask(getActivity());
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        CrimeLab.get(getActivity()).saveCrimes();
+    }
+
+    @TargetApi(11)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_crime, parent, false);
 
-        mTitleField = (EditText)v.findViewById(R.id.crime_title);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            if (NavUtils.getParentActivityName(getActivity()) != null) {
+                getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+        }
+
+        mTitleField = (EditText) v.findViewById(R.id.crime_title);
         mTitleField.setText(mCrime.getTitle());
         mTitleField.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(
@@ -81,7 +112,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
 
         });
 
-        mDateButton = (Button)v.findViewById(R.id.crime_date);
+        mDateButton = (Button) v.findViewById(R.id.crime_date);
 
         //CharSequence date = new DateFormat().format("EEEE d.LL.yyyy", mCrime.getDate());;
         updateDate();
@@ -96,10 +127,10 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
             }
         });
 
-        mSolvedCheckBox = (CheckBox)v.findViewById(R.id.crime_solved);
+        mSolvedCheckBox = (CheckBox) v.findViewById(R.id.crime_solved);
         mSolvedCheckBox.setChecked(mCrime.isSolved());
         mSolvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
             }
         });
@@ -111,7 +142,7 @@ public class CrimeFragment extends android.support.v4.app.Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) return;
         if (requestCode == REQUEST_DATE) {
-            Date date = (Date)data
+            Date date = (Date) data
                     .getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
             //mDateButton.setText(mCrime.getDate().toString());
